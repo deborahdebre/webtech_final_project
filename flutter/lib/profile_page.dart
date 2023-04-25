@@ -46,12 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
           backgroundColor: Colors.blue[900],
       ),
          body: SingleChildScrollView(
-           padding: EdgeInsets.only(
-             top: 80.0,
-             bottom: 20.0,
-             left: 250.0,
-             right: 250.0,
-           ),
+           padding: EdgeInsets.all(16),
           child: Form(
           key: formKey,
           child: Column(
@@ -401,7 +396,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       formKey.currentState!.save();
                       final confirmPassword = confirmPasswordController.text;
                       final response = await http.post(
-                        Uri.parse('http://127.0.0.1:5000/users'),
+                        Uri.parse('https://webtech-final-project-10.wl.r.appspot.com/users'),
                         headers: {
                           "Access-Control-Allow-Origin": "",
                           'Content-Type': 'application/json',
@@ -428,7 +423,20 @@ class _ProfilePageState extends State<ProfilePage> {
                         ));
                       });
                       if (response.statusCode == 200){
-                        globalVars.setState(loginStatus: true, idNumber: jsonDecode(response.body)['idNumber']);
+                        print(jsonDecode(response.body)['user_details']);
+                        final Map<String, dynamic> userData = jsonDecode(response.body)['user_details'];
+                        globalVars.setState(
+                          loginStatus: true,
+                          idNumber: userData['idNumber'],
+                          name: userData['name'],
+                          email: userData['email'],
+                          dob: userData['dob'],
+                          yearGroup: userData['yearGroup'],
+                          major: userData['major'],
+                          hasResidence: userData['hasResidence'],
+                          bestFood: userData['bestFood'],
+                          bestMovie: userData['bestMovie'],
+                        );
                           Navigator.push(
                             context,
                             MaterialPageRoute(

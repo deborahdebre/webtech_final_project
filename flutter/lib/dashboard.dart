@@ -1,9 +1,11 @@
+import 'package:final_proj_14/view_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'edit_profile_page.dart';
 import 'logout_page.dart';
 import 'create_post_page.dart';
 import 'feed_page.dart';
 import 'global_vars.dart';
+import 'view_profile_page.dart';
 
 class Dashboard extends StatelessWidget {
   @override
@@ -17,10 +19,22 @@ class Dashboard extends StatelessWidget {
       ),
       home: DefaultPage(),
       routes: {
-        '/edit_profile': (context) => EditProfilePage(),
+        '/edit_profile': (context) =>
+            EditProfilePage(
+              idNumber: '${globalVars.idNumber}',
+              name: '${globalVars.name}',
+              email: '${globalVars.email}',
+              dob: '${globalVars.dob}',
+              yearGroup: globalVars.yearGroup,
+              major: '${globalVars.major}',
+              hasResidence: globalVars.hasResidence,
+              bestFood: '${globalVars.bestFood}',
+              bestMovie: '${globalVars.bestMovie}',
+            ),
         '/logout': (context) => LogoutPage(),
         '/create_post': (context) => CreatePostPage(),
         '/feed': (context) => FeedPage(),
+        '/view_profile': (context) => ViewProfilePage(),
       },
     );
   }
@@ -41,7 +55,6 @@ class _DefaultPageState extends State<DefaultPage> {
   }
 
   Future<String> _loadName() async {
-    // load the name here
     return globalVars.name ?? 'Guest';
   }
 
@@ -80,10 +93,21 @@ class _DefaultPageState extends State<DefaultPage> {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              child: Text('Deb Social Media App'),
+              child: Text(
+                'Deb Social Media App',
+                style: TextStyle(fontSize: 18),
+              ),
               decoration: BoxDecoration(
                 color: Colors.blue[900],
               ),
+              padding: EdgeInsets.symmetric(vertical: 8),
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('View Profile'),
+              onTap: () {
+                Navigator.pushNamed(context, '/view_profile');
+              },
             ),
             ListTile(
               leading: Icon(Icons.edit),
@@ -122,13 +146,27 @@ class _DefaultPageState extends State<DefaultPage> {
           WidgetBuilder builder;
           switch (settings.name) {
             case '/edit_profile':
-              builder = (BuildContext context) => EditProfilePage();
+              builder = (BuildContext context) =>
+                  EditProfilePage(
+                idNumber: '${globalVars.idNumber}',
+                name: '${globalVars.name}',
+                email: '${globalVars.email}',
+                dob: '${globalVars.dob}',
+                yearGroup: globalVars.yearGroup,
+                major: '${globalVars.major}',
+                hasResidence: globalVars.hasResidence,
+                bestFood: '${globalVars.bestFood}',
+                bestMovie: '${globalVars.bestMovie}',
+              );
               break;
             case '/logout':
               builder = (BuildContext context) => LogoutPage();
               break;
             case '/create_post':
               builder = (BuildContext context) => CreatePostPage();
+              break;
+            case '/view_profile':
+              builder = (BuildContext context) => ViewProfilePage();
               break;
             case '/feed':
             default:

@@ -31,12 +31,7 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Colors.blue[900],
       ),
       body: Padding(
-        padding: EdgeInsets.only(
-          top: 80.0,
-          bottom: 20.0,
-          left: 250.0,
-          right: 250.0,
-        ),
+        padding:  EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
@@ -61,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                     size: 100,
                   ),
                 ),
-              ), // Message added here
+              ),
 
               // Added SizedBox for spacing
               Container(
@@ -84,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
-                    } else if (!value.contains('@')) {
+                    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
                       return 'Please enter a valid email';
                     }
                     return null;
@@ -136,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                     _formKey.currentState!.save();
                     // Send login request to the server
                     final response = await http.post(
-                      Uri.parse('http://127.0.0.1:5000/login'),
+                      Uri.parse('https://webtech-final-project-10.wl.r.appspot.com/login'),
                       headers: {
                         "Access-Control-Allow-Origin": "",
                         'Content-Type': 'application/json',
@@ -148,16 +143,28 @@ class _LoginPageState extends State<LoginPage> {
                       }),
                     );
                     if (response.statusCode == 200) {
-                      // Update the login status and id number in the global_vars.dart file
-                      globalVars.setState(loginStatus: true, idNumber: jsonDecode(response.body)['idNumber']);
-                      // Navigate to the feed page if authentication is successful
+                      final Map<String, dynamic> userData = jsonDecode(response.body)['user_details'];
+                      globalVars.setState(
+                        loginStatus: true,
+                        idNumber: userData['idNumber'],
+                        name: userData['name'],
+                        email: userData['email'],
+                        dob: userData['dob'],
+                        yearGroup: userData['yearGroup'],
+                        major: userData['major'],
+                        hasResidence: userData['hasResidence'],
+                        bestFood: userData['bestFood'],
+                        bestMovie: userData['bestMovie'],
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder:(context)=>Dashboard(),
                         ),
                       );
-                    } else {
+                    }
+
+                    else {
                       final jsonResponse = json.decode(
                           response.body)['message'];
                       WidgetsBinding.instance.addPostFrameCallback((_) {
